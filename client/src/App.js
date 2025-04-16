@@ -4,7 +4,7 @@ function App() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000')  // Backend URL
+    fetch('https://hello-world-qbco.onrender.com')  // Backend URL
       .then(response => response.text())
       .then(data => setMessage(data));
   }, []);
