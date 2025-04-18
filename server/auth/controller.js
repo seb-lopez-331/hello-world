@@ -27,7 +27,6 @@ exports.register = async (req, res) => {
 
     // Save the user to the database
     await newUser.save();
-    console.log(process.env.JWT_SECRET)
 
     // Create a JWT token
     const token = jwt.sign(
