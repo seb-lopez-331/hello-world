@@ -15,6 +15,9 @@ const port = process.env.PORT || 5000;
 const authRoutes = require('./auth/routes');
 app.use('/auth', authRoutes);
 
+const bankRoutes = require('./banks/routes');
+app.use('/bank', bankRoutes);
+
 // Use environment variables for MongoDB URI
 const mongoURI = process.env.MONGODB_URI;
 
@@ -31,19 +34,6 @@ app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
-
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
-
-// const mongoose = require('mongoose');
-
-// username = process.env.MONGODB_USERNAME
-// password = process.env.MONGODB_PASSWORD
-
-// mongoose.connect(`mongodb+srv://${username}:${password}@cluster0.mongodb.net/hello-world`, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// })
-//   .then(() => console.log('MongoDB connected'))
-//   .catch(err => console.log(err));
