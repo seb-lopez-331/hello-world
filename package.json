@@ -1,24 +1,23 @@
 {
-  "name": "hello-world-app",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "node server.js",
-    "client": "npm start --prefix client"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "mongoose": "^8.13.2"
-  },
-  "devDependencies": {
-    "@types/react": "^19.1.2",
-    "concurrently": "^9.1.2"
+    "name": "superior-budget-app",
+    "version": "1.0.0",
+    "description": "This is the superior budgetting app because I made it.",
+    "scripts": {
+      "start": "concurrently \"npm run server\" \"npm run client\"",
+      "server": "npm start --prefix server",
+      "client": "npm start --prefix client"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "cors": "^2.8.5",
+      "dotenv": "^16.5.0",
+      "express": "^5.1.0",
+      "mongoose": "^8.13.2"
+    },
+    "devDependencies": {
+      "@types/react": "^19.1.2",
+      "concurrently": "^9.1.2"
+    }
   }
-}
