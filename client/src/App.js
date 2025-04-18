@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AddBankAccount from './components/AddBankAccount';
 
 function App() {
   const [message, setMessage] = useState('');
@@ -12,6 +13,7 @@ function App() {
   return (
     <div className="App">
       <h1>{message}</h1>
+      <AddBankAccount />
     </div>
   );
 }

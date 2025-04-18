@@ -1,10 +1,10 @@
-const plaidService = require('../services/plaidService');
+// const plaidService = require('../services/plaidService');
 const BankAccount = require('../models/BankAccount');
 
 exports.createLinkToken = async (req, res) => {
   try {
-    const userId = req.user.id;  // Assuming you're using authentication middleware to get the logged-in user
-    const clientName = "Your App";  // Customize with your app's name
+    const userId = req.body.user.id;  // Assuming you're using authentication middleware to get the logged-in user
+    const clientName = "My App";  // Customize with your app's name
 
     // Step 1: Call Plaid's linkTokenCreate method
     const linkTokenResponse = await plaidService.createLinkToken(userId, clientName);

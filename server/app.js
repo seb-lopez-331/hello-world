@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+console.log('wow')
+
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
@@ -16,7 +18,7 @@ const authRoutes = require('./auth/routes');
 app.use('/auth', authRoutes);
 
 const bankRoutes = require('./banks/routes');
-app.use('/bank', bankRoutes);
+app.use('/banks', bankRoutes);
 
 // Use environment variables for MongoDB URI
 const mongoURI = process.env.MONGODB_URI;
