@@ -1,3 +1,6 @@
+const BankAccount = require('./BankAccount');
+const Alert = require('./Alert');
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -17,6 +20,23 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  preferences: {
+    type: Map,
+    of: String, // Example: { theme: 'dark', currency: 'USD' }
+    default: {}
+  },
+  connectedAccounts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'BankAccount' // Assuming you have a BankAccount model
+  }],
+  alerts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Alert' // Assuming you have an Alert model
+  }],
+  dateJoined: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 // Compare password method
