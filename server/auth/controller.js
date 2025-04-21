@@ -1,6 +1,8 @@
 require('dotenv').config();
 
 const User = require('../models/User');
+const RefreshToken = require('../models/RefreshToken');
+
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -214,11 +216,18 @@ exports.login = async (req, res) => {
   if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
 
   const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: '1h',
+    expiresIn: '15m',
   });
   const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: '7d',
   });
+
+  await RefreshToken.deleteOne({ id: user._id });
+  await new RefreshToken({
+    token: refreshToken,
+    id: user._id,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  }).save();
 
   // Send token in cookie
   res
@@ -233,6 +242,27 @@ exports.login = async (req, res) => {
       sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
     })
     .json({ message: 'Login successful' });
+};
+
+exports.logout = async (req, res) => {
+  try {
+    const token = req.cookies.refreshToken;
+
+    if (token) {
+      await RefreshToken.deleteOne({ token })
+    }
+
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production' ? true : false,
+      sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
+    });
+
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (err) {
+    console.error('Logout error:', err);
+    return res.status(500).json({ message: 'Server error during logout' });
+  }
 };
 
 exports.getProfile = async (req, res) => {

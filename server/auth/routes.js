@@ -9,6 +9,9 @@ router.get('/profile', authenticate, authController.getProfile);
 // POST request to login
 router.post('/login', authController.login);
 
+// POST request to logout
+router.post('/logout', authController.logout);
+
 // POST request to register
 router.post('/register', authController.register);
 
