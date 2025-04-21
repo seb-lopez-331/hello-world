@@ -26,7 +26,6 @@ const LoginPage = () => {
         body: JSON.stringify({email, password, username}),
       });
       
-      // TODO: Change this to some alert dialog
       if (!res.ok) {
         res.json().then(err => {
           alert(err.message);
@@ -53,9 +52,11 @@ const LoginPage = () => {
         credentials: 'include',
       });
       
-      // TODO: Change this to some alert dialog
       if (!res.ok) {
-        console.error(res);
+        res.json().then(err => {
+          alert(err.message);
+          console.error(err.message);
+        })
         return;
       }
 

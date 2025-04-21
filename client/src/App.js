@@ -9,7 +9,7 @@ import ConfirmEmail from './components/login/ConfirmEmail';
 import ForgotPassword from './components/login/ForgotPassword';
 import PasswordResetRequested from './components/login/PasswordResetRequested';
 import ResetPassword from './components/login/ResetPassword';
-import Home from './components/Home';
+import Home from './components/main/Home';
 
 
 function App() {
