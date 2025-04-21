@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const bankController = require('./controller.js');
 
-// Create a new link token
-router.post('/create-link-token', bankController.createLinkToken);
-
 // Connect a new bank account
 router.post('/connect', bankController.connectBank);
 

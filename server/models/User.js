@@ -12,6 +12,16 @@ const UserSchema = new mongoose.Schema({
     lowercase: true,
     trim: true,
   },
+  emailConfirmed: {
+    type: Boolean,
+    default: false,
+  },
+  emailConfirmationToken: {
+    type: String,
+  }, // hashed
+  emailConfirmationExpires: {
+    type: Date, // Token expiry timestamp
+  },
   password: { 
     type: String,
     required: true,
@@ -43,5 +53,10 @@ const UserSchema = new mongoose.Schema({
 UserSchema.methods.comparePassword = function (candidate) {
   return bcrypt.compare(candidate, this.password);
 };
+
+// Compare token hash
+UserSchema.methods.compareToken = function (candidate) {
+  return bcrypt.compare(candidate, this.emailConfirmationToken);
+}
 
 module.exports = mongoose.model('User', UserSchema);

@@ -8,7 +8,10 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const app = express();
-app.use(cors());  // Enable CORS for all routes
+app.use(cors({
+  origin: process.env.CLIENT,
+  credentials: true,
+}));  // Enable CORS for all routes
 app.use(express.json()); // Handle authentication
 app.use(cookieParser());
 

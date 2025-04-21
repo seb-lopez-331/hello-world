@@ -1,29 +1,18 @@
 // const plaidService = require('../services/plaidService');
+// TODO: USE TELLER INSTEAD
 const BankAccount = require('../models/BankAccount');
 
-exports.createLinkToken = async (req, res) => {
-  try {
-    const userId = req.body.user.id;  // Assuming you're using authentication middleware to get the logged-in user
-    const clientName = "My App";  // Customize with your app's name
+const tellerService = require('../services/tellerService');
 
-    // Step 1: Call Plaid's linkTokenCreate method
-    const linkTokenResponse = await plaidService.createLinkToken(userId, clientName);
-
-    // Step 2: Send the link token to the frontend
-    res.status(200).json({ link_token: linkTokenResponse.link_token });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error creating link token' });
-  }
-};
-
+// For this, the access token will be propagated to the backend
 exports.connectBank = async (req, res) => {
   try {
     const { public_token } = req.body;
     const { access_token, item_id } = await plaidService.exchangePublicToken(public_token);
 
-    const accounts = await plaidService.getAccounts(access_token);
+    const accounts = await tellerService.getAccounts(access_token);
 
+    // TODO: something like this, see API reference
     const savedAccounts = await BankAccount.insertMany(
       accounts.map(acc => ({
         userId: req.user.id,

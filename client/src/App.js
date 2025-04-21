@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import AddBankAccount from './components/AddBankAccount';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import LoginRedirector from './components/login/LoginRedirector';
+import LoginPage from './components/login/LoginPage';
+import ConfirmEmail from './components/login/ConfirmEmail';
+
+import Home from './components/Home';
+
 
 function App() {
   const [message, setMessage] = useState('');
@@ -11,11 +20,19 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <h1>{message}</h1>
-      <AddBankAccount />
-    </div>
-  );
+    <Router>
+      <Routes>
+        <Route element={<LoginRedirector />}>
+          <Route path="/" element={<Home />} />
+          {/* <Route path="/foo" element={<Foo />} /> */}
+          {/* <Route path="/about" element={<About />} /> */}
+          {/* Add more routes here */}
+        </Route>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/confirm-email" element={<ConfirmEmail />} />
+      </Routes>
+    </Router>
+  )
 }
 
 export default App;
