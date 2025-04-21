@@ -7,6 +7,11 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const cookie = require('cookie');
 
+const isValidEmail = (email) => {
+  const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return regex.test(email);
+}
+
 const sendConfirmationEmail = async (email, token) => {
   const clientUrl = process.env.CLIENT;
   const confirmUrl = `${clientUrl}/confirm-email?token=${token}`;
@@ -25,7 +30,7 @@ const sendConfirmationEmail = async (email, token) => {
   const mailOptions = {
     from: serverEmail,
     to: email,
-    subject: 'Please confirm your email',
+    subject: 'Superior Budget App | Please confirm your email',
     html: `
       <p>Thank you for registering. Please confirm your email by clicking the link below:</p>
       <a href="${confirmUrl}">Confirm Email</a>
@@ -43,17 +48,64 @@ const sendConfirmationEmail = async (email, token) => {
     console.error('SendGrid Error:', error.response?.body || error.message);
     throw new Error('Failed to send confirmation email');
   }
-}
+};
+
+const sendChangePasswordEmail = async (email, token) => {
+  const clientUrl = process.env.CLIENT;
+  const confirmUrl = `${clientUrl}/reset-password?token=${token}`;
+
+  const serverEmail = process.env.SERVER_EMAIL;
+  const serverEmailPassword = process.env.SERVER_EMAIL_APP_PASSWORD;
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: serverEmail,
+      pass: serverEmailPassword,
+    },
+  });
+
+  const mailOptions = {
+    from: serverEmail,
+    to: email,
+    subject: 'Superior Budget App | Please change your password',
+    html: `
+      <p>We received a request to change your password. If this request was not initiated by you, please disregard this email. Otherwise, click the following link to change your password:</p>
+      <a href="${confirmUrl}">Confirm Email</a>
+    `,
+  };
+
+  try {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return console.log('Error:', error);
+      }
+      console.log('Email sent:', info.response);
+    });
+  } catch (error) {
+    console.error('SendGrid Error:', error.response?.body || error.message);
+    throw new Error('Failed to send confirmation email');
+  }
+};
 
 // Registration function to create a new user
 exports.register = async (req, res) => {
   try {
     const { email, password, username } = req.body;
 
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ message: `"${email}" is not a valid email.` });
+    }
+
     // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    let existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res.status(400).json({ message: 'Email already in use' });
+      return res.status(400).json({ message: `Username "${username}" already in use.` });
+    }
+
+    existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: `Email "${email}" already in use.` });
     }
 
     // Hash the password before saving the user
@@ -107,10 +159,49 @@ exports.confirmEmail = async (req, res) => {
   user.emailConfirmed = true;
   user.emailConfirmationToken = undefined;
   user.emailConfirmationExpires = undefined;
-  console.log('do we even go here?')
   await user.save();
 
   res.send('Email confirmed successfully');
+}
+
+exports.confirmPasswordResetToken = async (req, res) => {
+  const { token } = req.params;
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+  
+  const user = await User.findOne({
+    emailConfirmationToken: hashedToken,
+    emailConfirmationExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    console.log('are we here?')
+    return res.status(400).send('Token is invalid or expired');
+  }
+
+  res.send('Token confirmed successfully');
+}
+
+exports.resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  const user = await User.findOne({
+    emailConfirmationToken: hashedToken,
+    emailConfirmationExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).send('Token is invalid or expired');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  user.emailConfirmationToken = undefined;
+  user.emailConfirmationExpires = undefined;
+  user.password = hashedPassword;
+  await user.save();
+
+  res.send('Password reset successfully');
 }
 
 exports.login = async (req, res) => {
@@ -122,38 +213,27 @@ exports.login = async (req, res) => {
   const isMatch = await user.comparePassword(password);
   if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+  const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: '1h',
+  });
+  const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: '7d',
   });
 
   // Send token in cookie
   res
-    .cookie('token', token, {
+    .cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production' ? true : false,
+      sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
+    })
+    .cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production' ? true : false,
       sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
     })
     .json({ message: 'Login successful' });
 };
-
-exports.getSession = async (req, res) => {
-  const cookies = cookie.parse(req.headers.cookie || '');
-  const token = cookies.token;
-
-  if (!token) {
-    return res.status(401).json({ authenticated: false });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return res.status(200).json({
-      authenticated: true,
-      user: { id: decoded.sub, email: decoded.email }, // Customize this
-    });
-  } catch {
-    return res.status(401).json({ authenticated: false });
-  }
-}
 
 exports.getProfile = async (req, res) => {
   try {
@@ -165,7 +245,39 @@ exports.getProfile = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
-}
+};
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+
+    // Add an email confirmation token
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+    const tokenExpires = Date.now() + 1000 * 60 * 60; // 1 hour from now
+
+    // Unconfirm the user
+    user.emailConfirmationToken = hashedToken;
+    user.emailConfirmationExpires = tokenExpires;
+    await user.save();
+
+    // Send confirmation email with the token
+    sendChangePasswordEmail(email, rawToken)
+    .then(() => {
+      res.status(200).send('We received a request to reset your password. Please check your email for further instructions.');
+    })
+    .catch((error) => {
+      console.error('Error sending password reset email:', error);
+      res.status(500).send('Error sending password reset email.');
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
 exports.deleteUser = async (req, res) => {
   try {

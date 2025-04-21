@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
 const LoginRedirector = () => {
   const [user, setUser] = useState(null);
@@ -31,7 +31,7 @@ const LoginRedirector = () => {
     return <div>Loading...</div>;
   }
 
-  return user === undefined ? <Navigate to="/login" replace />: <div>Welcome home, {user.username}</div>
+  return user === undefined ? <Navigate to="/login" replace />: <Outlet />;
 }
 
 export default LoginRedirector;

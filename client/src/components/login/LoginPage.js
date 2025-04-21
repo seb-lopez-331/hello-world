@@ -1,8 +1,8 @@
-import {React, useState} from "react";
-import { jwtDecode } from "jwt-decode";
+import { React, useState } from "react";
 import { useNavigate } from 'react-router-dom'; 
 
-import './LoginPage.css';
+import '../style/Login.css';
+
 import userIcon from '../assets/person.png';
 import emailIcon from '../assets/email.png';
 import passwordIcon from '../assets/password.png';
@@ -28,7 +28,10 @@ const LoginPage = () => {
       
       // TODO: Change this to some alert dialog
       if (!res.ok) {
-        console.error(res);
+        res.json().then(err => {
+          alert(err.message);
+          console.error(err.message);
+        })
         return;
       }
       
@@ -94,7 +97,16 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        {action==="Sign Up"?<div></div>:<div className="forgot-password">Lost Password? <span>Click Here!</span></div>}
+        { action === "Sign Up" ? 
+          <div> </div> : 
+          <div className="forgot-password">
+            Lost Password?<nbsp> </nbsp>
+            <span onClick={async () => {
+              navigate('/forgot-password');
+            }}>
+              Click Here!
+            </span>
+          </div>}
         <div className="submit-container">
           <div 
             className={action === "Login" ? "submit-gray" : "submit"}

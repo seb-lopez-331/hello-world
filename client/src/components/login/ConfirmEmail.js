@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import './ConfirmEmail.css';
+import '../style/Login.css';
 
 const ConfirmEmail = () => {
   const [isValidToken, setIsValidToken] = useState(null);

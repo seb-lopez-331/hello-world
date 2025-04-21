@@ -105,3 +105,23 @@
     font-weight: 700;
     cursor: pointer;
 }
+
+.card {
+    max-width: 28rem; /* max-w-md */
+    margin: 2.5rem auto 0; /* mt-10 + mx-auto */
+    padding: 1.5rem; /* p-6 */
+    background-color: white;
+    border-radius: 1rem; /* rounded-2xl */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* space-y-6 */
+}
+
+.paragraph {
+    margin: 1rem auto 0; /* mt-10 + mx-auto */
+    display: flex;
+    text-align: center;
+    font-size: 18px;
+}

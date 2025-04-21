@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import AddBankAccount from './components/AddBankAccount';
+import AddBankAccount from './components/banks/AddBankAccount';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import LoginRedirector from './components/login/LoginRedirector';
 import LoginPage from './components/login/LoginPage';
 import ConfirmEmail from './components/login/ConfirmEmail';
-
+import ForgotPassword from './components/login/ForgotPassword';
+import PasswordResetRequested from './components/login/PasswordResetRequested';
+import ResetPassword from './components/login/ResetPassword';
 import Home from './components/Home';
 
 
@@ -24,12 +26,16 @@ function App() {
       <Routes>
         <Route element={<LoginRedirector />}>
           <Route path="/" element={<Home />} />
+          
           {/* <Route path="/foo" element={<Foo />} /> */}
           {/* <Route path="/about" element={<About />} /> */}
           {/* Add more routes here */}
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/confirm-email" element={<ConfirmEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/password-reset-requested" element={<PasswordResetRequested />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </Router>
   )
