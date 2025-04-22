@@ -1,0 +1,17 @@
+.date-range-container {
+    display: flex;
+    justify-content: center;
+    width: 6rem;
+}
+
+.date-range {
+    display: flex;
+    padding: 0 8px;
+    align-items: vertical;
+    width: 6rem;
+    justify-content: space-between;
+}
+
+.react-datepicker__input-container input::placeholder {
+    font-size: .7rem; /* Adjust font size as needed */
+}

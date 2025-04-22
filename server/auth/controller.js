@@ -248,13 +248,20 @@ exports.login = async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-    const token = req.cookies.refreshToken;
+    const refreshToken = req.cookies.refreshToken;
+    const accessToken = req.cookies.accessToken;
 
-    if (token) {
-      await RefreshToken.deleteOne({ token })
+    if (refreshToken) {
+      await RefreshToken.deleteOne({ refreshToken })
     }
 
     res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production' ? true : false,
+      sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
+    });
+
+    res.clearCookie('accessToken',{
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production' ? true : false,
       sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',

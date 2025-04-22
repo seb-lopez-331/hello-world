@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import '../style/Login.css';
-import passwordIcon from '../assets/password.png';
+import '../../style/Login.css';
+import passwordIcon from '../../assets/password.png';
 
 const ResetPassword = () => {
   const [isValidToken, setIsValidToken] = useState(null);

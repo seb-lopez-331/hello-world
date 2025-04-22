@@ -1,11 +1,11 @@
 import { React, useState } from "react";
 import { useNavigate } from 'react-router-dom'; 
 
-import '../style/Login.css';
+import '../../style/Login.css';
 
-import userIcon from '../assets/person.png';
-import emailIcon from '../assets/email.png';
-import passwordIcon from '../assets/password.png';
+import userIcon from '../../assets/person.png';
+import emailIcon from '../../assets/email.png';
+import passwordIcon from '../../assets/password.png';
 
 const LoginPage = () => {
   const [action, setAction] = useState("Sign Up");
@@ -63,7 +63,7 @@ const LoginPage = () => {
       // Redirect to homepage
       navigate('/');
     } catch (error) {
-      console.error("Error during registration:", error);
+      console.error("Error during logging in:", error);
     }
   }
 

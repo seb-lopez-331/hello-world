@@ -9,7 +9,11 @@ import ConfirmEmail from './components/login/ConfirmEmail';
 import ForgotPassword from './components/login/ForgotPassword';
 import PasswordResetRequested from './components/login/PasswordResetRequested';
 import ResetPassword from './components/login/ResetPassword';
+
+import Sidebar from './components/layout/Sidebar';
+
 import Home from './components/main/Home';
+
 
 
 function App() {
@@ -25,7 +29,14 @@ function App() {
     <Router>
       <Routes>
         <Route element={<LoginRedirector />}>
-          <Route path="/" element={<Home />} />
+          <Route 
+            path="/*" 
+            element={
+              <>
+                <Sidebar/>
+              </>
+            } 
+          />
           
           {/* <Route path="/foo" element={<Foo />} /> */}
           {/* <Route path="/about" element={<About />} /> */}
