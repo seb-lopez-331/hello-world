@@ -1,24 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { SidebarData } from './SidebarData';
 import '../../style/Sidebar.css';
 import { IconContext } from 'react-icons';
 
-import DateRangePicker from '../utils/DateRangePicker';
+import Topbar from './Topbar';
 
 const Sidebar = () => {
   const [sidebar, setSidebar] = useState(false);
   const [user, setUser] = useState(null);
 
   const showSidebar = () => setSidebar(!sidebar);
-
-  const location = useLocation();
-  const path = location.pathname;
-
-  const showDateRangePicker = ['/'].includes(path);
-
+  
   useEffect(() => {
     const fetchUserData = async () => {
       const serverUrl = process.env.REACT_APP_SERVER;
@@ -50,7 +45,7 @@ const Sidebar = () => {
 
       if (res.ok) {
         const data = await res.json();
-        setUser(data);
+        // navigate to logout
       } else {
         console.error("Failed to fetch user data");
       } 
@@ -62,17 +57,11 @@ const Sidebar = () => {
   return user ? (
     <>
       <IconContext.Provider value={{ color: '#fff' }}>
-        <div className="navbar">
+        <div className={sidebar ? 'navbar shift-right' : 'navbar'}>
           <Link to="#" className='menu-bars'>
             <FaIcons.FaBars onClick={showSidebar}/>
           </Link>
-          <div className="user-info">
-            <p>User: { user.username }</p> {/* Replace with dynamic user data */}
-          </div>
-          <div className={`date-filter ${showDateRangePicker ? 'show' : ''}`}>
-            <DateRangePicker/>
-          </div>
-          <button onClick={handleLogout} className="logout-btn">Logout</button>
+          <Topbar/>
         </div>
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
           <ul className='nav-menu-items' onClick={showSidebar}>

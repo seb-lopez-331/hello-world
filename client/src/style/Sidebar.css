@@ -4,6 +4,11 @@
     display: flex;
     justify-content: start;
     align-items: center;
+    transition: all 850ms;
+}
+
+.navbar.shift-right {
+    margin-left: 250px;
 }
 
 .menu-bars {
@@ -20,13 +25,13 @@
     justify-content: center;
     position: fixed;
     top: 0;
-    left: -100%;
-    transition: 850ms;
+    left: -250px;
+    transition: all 850ms;
 }
 
 .nav-menu.active {
     left: 0;
-    transition: 350ms;
+    transition: all 850ms;
 }
 
 .nav-text {
