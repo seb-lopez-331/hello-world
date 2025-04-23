@@ -32,7 +32,7 @@ const Topbar = ({ user, handleLogout }) => {
             Contact Us
           </NavLink>
         </NavMenu>
-        <DateRangePickerComponent/>
+        {user ? <DateRangePickerComponent/> : <></>}
         <NavBtn>
           {user ? (
             <NavBtnLink as="button" onClick={handleLogout}>
