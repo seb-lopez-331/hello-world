@@ -1,0 +1,25 @@
+.contact-us-container {
+    color: #ffa;
+    text-align: center;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  input,
+  textarea {
+    width: 80%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background-color: #ffa;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }

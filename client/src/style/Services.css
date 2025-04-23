@@ -1,0 +1,20 @@
+.services-container {
+    color: #ffa;
+    text-align: center;
+  }
+  
+  .services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .service {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .service h2 {
+    margin-bottom: 10px;
+  }
