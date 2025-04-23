@@ -10,8 +10,7 @@ import ForgotPassword from './components/login/ForgotPassword';
 import PasswordResetRequested from './components/login/PasswordResetRequested';
 import ResetPassword from './components/login/ResetPassword';
 
-import Sidebar from './components/layout/Sidebar';
-import Topbar from './components/layout/Topbar';
+import Sidebar from './components/layout/AppLayout';
 
 import Home from './components/main/Home';
 

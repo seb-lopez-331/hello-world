@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import * as FaIcons from "react-icons/fa";
-import * as AiIcons from "react-icons/ai";
 import { Link } from 'react-router-dom';
-import { SidebarData } from './SidebarData';
-import '../../style/Sidebar.css';
+import * as AiIcons from "react-icons/ai";
+import * as FaIcons from "react-icons/fa";
 import { IconContext } from 'react-icons';
 
 import Topbar from './Topbar';
+import { SidebarData } from './SidebarData';
 
-const Sidebar = () => {
+import '../../style/Layout.css';
+
+
+const AppLayout = () => {
   const [sidebar, setSidebar] = useState(false);
   const [user, setUser] = useState(null);
-
-  const showSidebar = () => setSidebar(!sidebar);
   
+  const showSidebar = () => setSidebar(!sidebar);
+
   useEffect(() => {
     const fetchUserData = async () => {
       const serverUrl = process.env.REACT_APP_SERVER;
@@ -33,7 +35,7 @@ const Sidebar = () => {
     }
 
     fetchUserData();
-  }, [])
+  }, []);
 
   const handleLogout = async () => {
     const serverUrl = process.env.REACT_APP_SERVER;
@@ -61,11 +63,11 @@ const Sidebar = () => {
           <Link to="#" className='menu-bars'>
             <FaIcons.FaBars onClick={showSidebar}/>
           </Link>
-          <Topbar/>
+          <Topbar user={user}/>
         </div>
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
-          <ul className='nav-menu-items' onClick={showSidebar}>
-            <li className="navbar-toggle">
+          <ul className='nav-menu-items'>
+            <li className="navbar-toggle" onClick={showSidebar}>
               <Link to="#" className='menu-bars'>
                 <AiIcons.AiOutlineClose />
               </Link>
@@ -87,4 +89,4 @@ const Sidebar = () => {
   ) : (<p>Loading</p>);
 };
 
-export default Sidebar;
+export default AppLayout;

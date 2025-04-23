@@ -3,10 +3,10 @@ import { NavLink as Link } from 'react-router-dom';
 
 export const Nav = styled.nav`
   background: transparent;
-  height: 60px;
   display: flex;
+  width: 100%;
   justify-content: space-between;
-  padding: 0.5rem calc((100vw - 1000px) / 2);
+  padding: 0.5rem calc((100vw - 1000px) / 2))
   z-index: 10;
 `
 
@@ -23,6 +23,15 @@ export const NavLink = styled(Link)`
     color: #15cdfc;
   }
 `
+
+export const Heading = styled.div`
+  color: #ffa;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 0 1rem;
+  height: 100%;
+`;
 
 export const NavMenu = styled.div`
   display: flex;

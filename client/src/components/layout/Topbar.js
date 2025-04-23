@@ -4,12 +4,12 @@ import {
   NavLink, 
   NavMenu, 
   NavBtn, 
-  NavBtnLink
+  NavBtnLink,
+  Heading,
 } from './TopbarElements';
 import { useLocation } from 'react-router-dom';
-import DateRangePicker from '../utils/DateRangePicker';
 
-const Topbar = () => {
+const Topbar = ({ user }) => {
   const location = useLocation();
   const path = location.pathname;
   const showDateRangePicker = ['/'].includes(path);
@@ -17,9 +17,9 @@ const Topbar = () => {
   return (
     <>
       <Nav>
-        <NavLink to="/">
-          <h1>Logo</h1>
-        </NavLink>
+        <Heading>
+          <h1>User: {user.username}</h1>
+        </Heading>
         <NavMenu>
           <NavLink to="/about" activeStyle>
             About
@@ -32,15 +32,13 @@ const Topbar = () => {
           </NavLink>
         </NavMenu>
         <NavBtn>
-          <NavBtnLink to="/signin">Sign In</NavBtnLink>
+          <NavBtnLink to="/signin">Log Out</NavBtnLink>
         </NavBtn>
       </Nav>   
     </>
   );
 };
 
-<div className="navbar">
-          <Topbar/>
           {/* <Link to="#" className='menu-bars'>
             <FaIcons.FaBars onClick={showSidebar}/>
           </Link>
@@ -51,6 +49,5 @@ const Topbar = () => {
             <DateRangePicker/>
           </div>
           <button onClick={handleLogout} className="logout-btn">Logout</button> */}
-        </div>
 
 export default Topbar;
