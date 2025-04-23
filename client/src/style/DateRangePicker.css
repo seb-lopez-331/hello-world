@@ -1,17 +1,40 @@
-.date-range-container {
-    display: flex;
-    justify-content: center;
-    width: 6rem;
+.calendar {
+    padding: 20px;
+    border: 2px solid gray;
+    cursor: pointer;
+    color: #ffa;
+    font-size: 12px;
 }
 
-.date-range {
-    display: flex;
-    padding: 0 8px;
-    align-items: vertical;
-    width: 6rem;
-    justify-content: space-between;
+.dateRange {
+    position: absolute;
+    top: 120px;
 }
 
-.react-datepicker__input-container input::placeholder {
-    font-size: .7rem; /* Adjust font size as needed */
-}
+/* Mobile styles */
+@media screen and (max-width: 768px) {
+    .dateRange {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      padding: 10px;
+      z-index: 1000;
+      background-color: white;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .rdrCalendarWrapper {
+      width: 100% !important;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+  
+    .rdrDateRangeWrapper {
+      flex-direction: column;
+    }
+  }

@@ -7,6 +7,7 @@ import {
   NavBtnLink,
   Heading,
 } from './TopbarElements';
+import DateRangePickerComponent from '../utils/DateRangePickerComponent';
 import { useLocation } from 'react-router-dom';
 
 const Topbar = ({ user, handleLogout }) => {
@@ -31,6 +32,7 @@ const Topbar = ({ user, handleLogout }) => {
             Contact Us
           </NavLink>
         </NavMenu>
+        <DateRangePickerComponent/>
         <NavBtn>
           {user ? (
             <NavBtnLink as="button" onClick={handleLogout}>
