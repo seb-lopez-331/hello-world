@@ -1,0 +1,1 @@
+// Manual entry or edit of transactions

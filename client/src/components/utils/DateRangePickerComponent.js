@@ -27,7 +27,7 @@ const DateRangePickerComponent = () => {
       {/*Change this into a calendar icon using react-icons*/}
       <span onClick={handleClick} className="calendar">
         {
-          `${format(date.startDate, 'MMM,dd,yyyy')} to ${format(date.endDate, 'MMM,dd,yyyy')}`
+          openDate ? 'CONFIRM SELECTION' : `${format(date.startDate, 'MMM,dd,yyyy')} to ${format(date.endDate, 'MMM,dd,yyyy')}`
         }
       </span>
       {openDate && <DateRangePicker
