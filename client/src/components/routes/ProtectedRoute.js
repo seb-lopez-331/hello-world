@@ -1,8 +1,11 @@
-import { Navigate } from 'react-router-dom';
+// routes/ProtectedRoute.jsx
+import { Outlet } from 'react-router-dom';
+import NotAuthorized from '../pages/NotAuthorized';
 
-const ProtectedRoute = ({ isAuthenticated, children }) => {
-  if (!isAuthenticated) return <Navigate to="/login" />;
-  return children;
-};
+export default function ProtectedRoute() {
+  const { user, loading } = useAuth();
 
-export default ProtectedRoute;
+  if (loading) return <div>Loading...</div>;
+
+  return user ? <Outlet /> : <NotAuthorized />;
+}

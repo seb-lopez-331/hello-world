@@ -7,7 +7,7 @@ import {
   NavBtnLink,
   Heading,
 } from './TopbarElements';
-import { useLocation, Outlet } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const Topbar = ({ user, handleLogout }) => {
   const location = useLocation();
@@ -41,7 +41,6 @@ const Topbar = ({ user, handleLogout }) => {
           )}
         </NavBtn>
       </Nav>
-      <Outlet />
     </>
   );
 };

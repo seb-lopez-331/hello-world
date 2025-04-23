@@ -1,12 +1,14 @@
 // Routes that require authentication
 import { Routes, Route } from 'react-router-dom';
-import ProtectedRoute from './ProtectedRoute';
+import AppLayout from '../layout/AppLayout';
 import React from 'react';
 
 const DashboardRoutes = () => {
   return (
     <Routes>
-      {/*Nest a ProtectedRoute within a Route*/}
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<></>}/>
+      </Route>
     </Routes>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Outlet, useLocation, Navigate } from 'react-router-dom';
 import * as AiIcons from "react-icons/ai";
 import * as FaIcons from "react-icons/fa";
 import { IconContext } from 'react-icons';
@@ -9,11 +9,13 @@ import { SidebarData } from './SidebarData';
 
 import '../../style/Layout.css';
 
+const protectedPaths = ['/dashboard'];
 
 const AppLayout = () => {
   const [sidebar, setSidebar] = useState(false);
-  const [user, setUser] = useState(null);
-  
+  const [user, setUser] = useState(undefined);
+  const location = useLocation();
+
   const showSidebar = () => setSidebar(!sidebar);
 
   useEffect(() => {
@@ -28,6 +30,7 @@ const AppLayout = () => {
           setUser(data);
         } else {
           console.error("Failed to fetch user data");
+          setUser(null);
         } 
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -47,15 +50,21 @@ const AppLayout = () => {
 
       if (res.ok) {
         const data = await res.json();
-        // navigate to logout
       } else {
         console.error("Failed to fetch user data");
       } 
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
+    window.location.reload();
   }
 
+  const isProtected = protectedPaths.some((path) => location.pathname.startsWith(path));
+  
+  if ((user === null) && isProtected) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+  
   return user ? (
     <>
       <IconContext.Provider value={{ color: '#fff' }}>
@@ -63,7 +72,7 @@ const AppLayout = () => {
           <Link to="#" className='menu-bars'>
             <FaIcons.FaBars onClick={showSidebar}/>
           </Link>
-          <Topbar user={user}/>
+          <Topbar user={user} handleLogout={handleLogout}/>
         </div>
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
           <ul className='nav-menu-items'>
@@ -85,8 +94,14 @@ const AppLayout = () => {
           </ul>
         </nav>
       </IconContext.Provider>
+      <Outlet />
     </>
-  ) : (<p>Loading</p>);
+  ) : (
+    <>
+      <Topbar/>
+      <Outlet/>
+    </>
+  );
 };
 
 export default AppLayout;
