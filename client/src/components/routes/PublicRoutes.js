@@ -16,15 +16,18 @@ import NotFound from '../errors/NotFound';
 import NotAuthorized from '../errors/NotAuthorized';
 
 import AppLayout from '../layout/AppLayout';
+import LoginLayout from '../layout/LoginLayout';
 
 const PublicRoutes = () => {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/confirm-email" element={<ConfirmEmail />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/password-reset-requested" element={<PasswordResetRequested />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route element={<LoginLayout />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/confirm-email" element={<ConfirmEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/password-reset-requested" element={<PasswordResetRequested />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+      </Route>
       
       <Route path="/unauthorized" element={<NotAuthorized />} />
       <Route path="/*" element={<NotFound />} />
