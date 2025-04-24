@@ -8,31 +8,31 @@ import * as MdIcons from "react-icons/md";
 export const SidebarData = [
   {
     title: 'Home',
-    path: '/',
+    path: '/dashboard',
     icon: <AiIcons.AiFillHome />,
     cName: 'nav-text',
   },
   {
     title: 'Settings',
-    path: '/settings',
+    path: '/dashboard/settings',
     icon: <IoIcons.IoIosSettings />,
     cName: 'nav-text',
   },
   {
     title: 'Categories',
-    path: '/categories',
+    path: '/dashboard/categories',
     icon: <BiIcons.BiCategory />,
     cName: 'nav-text',
   },
   {
     title: 'Linked Accounts',
-    path: '/linked-accounts',
+    path: '/dashboard/linked-accounts',
     icon: <MdIcons.MdAccountCircle />,
     cName: 'nav-text',
   },
   {
     title: 'Budget Configuration',
-    path: '/budget-configuration',
+    path: '/dashboard/budget-configuration',
     icon: <FaIcons.FaChartPie />,
     cName: 'nav-text',
   },

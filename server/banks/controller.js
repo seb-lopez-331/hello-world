@@ -1,33 +1,58 @@
-// const plaidService = require('../services/plaidService');
-// TODO: USE TELLER INSTEAD
+const { encrypt, decrypt } = require('../services/cryptoTools');
+const key = Buffer.from(process.env.TELLER_ACCESS_TOKEN_ENCRYPTION_KEY, 'base64');
+
 const BankAccount = require('../models/BankAccount');
+const User = require('../models/User');
 
 const tellerService = require('../services/tellerService');
 
 // For this, the access token will be propagated to the backend
 exports.connectBank = async (req, res) => {
   try {
-    const { public_token } = req.body;
-    const { access_token, item_id } = await plaidService.exchangePublicToken(public_token);
+    const { authorization } = req.body;
+    const accessToken = authorization.accessToken;
+    console.log("got access token from request body");
+    console.log(accessToken);
 
-    const accounts = await tellerService.getAccounts(access_token);
+    const accounts = await tellerService.getAccounts(accessToken);
+    console.log("got accounts");
+    console.log(accounts);
+
+    const accountsArray = accounts.map(acc => ({
+      userId: req.user.id,
+      accessToken: encrypt(accessToken, key),
+      enrollmentId: acc.enrollment_id,
+      links: {
+        balances: acc.links.balances,
+        self: acc.links.self,
+        transactions: acc.links.transactions,
+      },
+      institution: {
+        name: acc.institution.name,
+        id: acc.institution.id,
+      },
+      type: acc.type,
+      name: acc.name,
+      subtype: acc.subtype,
+      currency: acc.currency,
+      id: acc.id,
+      lastFour: acc.last_four,
+      status: acc.status,
+    }));
 
     // TODO: something like this, see API reference
-    const savedAccounts = await BankAccount.insertMany(
-      accounts.map(acc => ({
-        userId: req.user.id,
-        accessToken: access_token,
-        itemId: item_id,
-        accountId: acc.account_id,
-        name: acc.name,
-        mask: acc.mask,
-        type: acc.type,
-        subtype: acc.subtype
-      }))
-    );
+    const savedAccounts = await BankAccount.insertMany(accountsArray);
+    const savedAccountDBIDs = savedAccounts.map(acc => acc._id);
+
+    await User.findByIdAndUpdate(req.user.id, {
+      $push: { connectedAccounts: { $each: savedAccountDBIDs } }
+    });
+
+    console.log("insert all the saved accounts");
 
     res.status(201).json(savedAccounts);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: 'Error connecting bank account', error });
   }
 };
@@ -38,15 +63,23 @@ exports.getBankAccounts = async (req, res) => {
 };
 
 exports.disconnectBank = async (req, res) => {
-  const { accountId } = req.params;
-  const account = await BankAccount.findOne({ userId: req.user.id, accountId });
+  const { bank } = req.params;
+  const accounts = await BankAccount.find({ 
+    userId: req.user.id, 
+    institution: {
+      name: bank,
+    },
+  });
 
-  if (!account) return res.status(404).json({ message: 'Account not found' });
+  if (!accounts) return res.status(404).json({ message: 'Accounts with bank not found' });
 
-  await plaidService.removeItem(account.accessToken);
-  await BankAccount.deleteOne({ accountId });
+  accounts.forEach(async (acc) => {
+    const accessToken = decrypt(acc.accessToken, key);
+    await tellerService.deleteAccount(accessToken, acc.id);
+    await BankAccount.deleteOne({ id: acc.id })
+  });
 
-  res.json({ message: 'Account disconnected' });
+  res.json({ message: 'Bank disconnected' });
 };
 
 exports.getAccountBalance = async (req, res) => {

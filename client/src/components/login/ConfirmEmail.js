@@ -49,7 +49,6 @@ const ConfirmEmail = () => {
   });
 
   if (isValidToken === null) {
-    console.log('here')
     return (<div className="card">
       <h2 className="header">Account Confirmation</h2>
       <p>

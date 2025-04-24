@@ -1,40 +1,81 @@
 const mongoose = require('mongoose');
 
+const linksSchema = new mongoose.Schema({
+  balances: {
+    type: String,
+    required: true,
+  },
+  self: {
+    type: String,
+    required: true,
+  },
+  transactions: {
+    type: String,
+    required: true,
+  },
+});
+
+const institutionSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  id: {
+    type: String,
+    required: true,
+  },
+});
+
 const bankAccountSchema = new mongoose.Schema({
-  user: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Reference to the User model
-    required: true
-  },
-  bankName: {
-    type: String,
-    required: true
-  },
-  accountType: {
-    type: String,
-    enum: ['checking', 'savings', 'credit'], // You can customize the types
-    required: true
-  },
-  accountNumber: {
-    type: String, // Use a more secure approach for storing sensitive data in production
-    required: true
+    required: true,
   },
   accessToken: {
     type: String, // For accessing data from Plaid or other integrations
+    required: true,
+  },
+  enrollmentId: {
+    type: String,
+    required: true,
+  },
+  links: {
+    type: linksSchema,
+    required: true,
+  },
+  institution: {
+    type: institutionSchema,
+    required: true,
+  },
+  type: {
+    type: String,
     required: true
   },
-  balance: {
-    type: Number, // Store the latest balance for easy access
+  name: {
+    type: String,
+    required: true
+  },
+  subtype: {
+    type: String,
+    required: true
+  },
+  currency: {
+    type: String,
     default: 0
   },
-  transactions: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Transaction' // Reference to transactions associated with this account
-  }],
-  dateConnected: {
-    type: Date,
-    default: Date.now
-  }
+  id: {
+    type: String,
+    required: true
+  },
+  lastFour: {
+    type: String,
+    required: true
+  },
+  status: {
+    type: String,
+    required: true
+  },
 });
 
 module.exports = mongoose.model('BankAccount', bankAccountSchema);

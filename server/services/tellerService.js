@@ -54,3 +54,8 @@ exports.getTransactions = async (accessToken, accountId, start, end) => {
   const response = await callTellerApi('get', `/accounts/${accountId}/transactions`, accessToken);
   return response.data;
 };
+
+exports.deleteAccount = async (accessToken, accountId) => {
+  const response = await callTellerApi('delete', `/accounts/${accountId}`, accessToken);
+  return response.data;
+};
