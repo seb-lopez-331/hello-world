@@ -18,7 +18,8 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2",
-    "plaid": "^31.1.0"
+    "plaid": "^31.1.0",
+    "redis": "^4.7.0"
   },
   "devDependencies": {
     "@types/react": "^19.1.2",

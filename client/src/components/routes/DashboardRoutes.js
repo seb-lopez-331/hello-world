@@ -5,15 +5,13 @@ import React from 'react';
 import AppLayout from '../layout/AppLayout';
 import AccountsManager from '../settings/AccountsManager';
 
-const DashboardRoutes = ({ user }) => {
-  return user ? (
-    <Routes>
-      <Route element={<AppLayout />}>
-        <Route path="/" element={<></>}/>
-        <Route path="/linked-accounts" element={<AccountsManager user={ user }/>}/>
-      </Route>
-    </Routes>
-  ) : <h1>Loading</h1>;
+const DashboardRoutes = () => {
+  return ( <Routes>
+    <Route element={<AppLayout />}>
+      <Route path="/" element={<></>}/>
+      <Route path="/linked-accounts" element={<AccountsManager />}/>
+    </Route>
+  </Routes> );
 };
 
 export default DashboardRoutes;

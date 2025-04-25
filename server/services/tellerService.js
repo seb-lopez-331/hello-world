@@ -47,6 +47,8 @@ exports.getAccounts = async (accessToken) => {
 
 exports.getBalance = async (accessToken, accountId) => {
   const response = await callTellerApi('get', `/accounts/${accountId}/balances`, accessToken);
+  console.log("got response from teller api");
+  console.log(response.data);
   return response.data;
 };
 

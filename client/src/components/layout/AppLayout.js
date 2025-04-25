@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import useUser from '../utils/useUser';
 import { Link, Outlet, useLocation, Navigate } from 'react-router-dom';
 import * as AiIcons from "react-icons/ai";
 import * as FaIcons from "react-icons/fa";
@@ -13,32 +14,11 @@ const protectedPaths = ['/dashboard'];
 
 const AppLayout = () => {
   const [sidebar, setSidebar] = useState(false);
-  const [user, setUser] = useState(undefined);
-  const location = useLocation();
-
   const showSidebar = () => setSidebar(!sidebar);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const serverUrl = process.env.REACT_APP_SERVER;
-      try {
-        const res = await fetch(`${serverUrl}/auth/profile`, {
-          credentials: 'include' // ensures cookies are sent
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data);
-        } else {
-          console.error("Failed to fetch user data");
-          setUser(null);
-        } 
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    }
-
-    fetchUserData();
-  }, []);
+  
+  const user = useUser();
+  console.log(user);
+  const location = useLocation();
 
   const handleLogout = async () => {
     const serverUrl = process.env.REACT_APP_SERVER;
@@ -61,7 +41,7 @@ const AppLayout = () => {
 
   const isProtected = protectedPaths.some((path) => location.pathname.startsWith(path));
   
-  if ((user === null) && isProtected) {
+  if ((user == {}) && isProtected) {
     return <Navigate to="/unauthorized" replace />;
   }
   

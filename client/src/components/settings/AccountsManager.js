@@ -1,15 +1,13 @@
 // Linked bank accounts, manual accounts, balances
-import { useState, useEffect } from "react";
+import React from "react";
 import { useTellerConnect } from 'teller-connect-react';
 
+import useUser from '../utils/useUser'
 import AccountCard from '../dashboard/AccountCard';
 
 import '../../style/AccountsManager.css';
 
-const AccountsManager = ({ user }) => {
-  console.log(user);
-  const bankAccounts = user?.connectedAccounts;
-
+const AccountsManager = () => {
   const handleSuccess = async (authorization) => {
     // Save your access token here
     const serverUrl = process.env.REACT_APP_SERVER;
@@ -41,11 +39,17 @@ const AccountsManager = ({ user }) => {
     onSuccess: handleSuccess,
   });
 
+  const user = useUser();
+  if (!user) return <p>Loading...</p>;
+  
   return (
     <>
-      <div className="container">
+      <div className="accounts-container">
+        <h1 className="accounts-manager-header">
+          Linked Accounts 
+        </h1>
         <div className="bank-accounts">
-          { bankAccounts?.map((account) => <AccountCard account={account} />) }
+          { user.connectedAccounts.map((account) => <AccountCard account={account} />) }
         </div>
         <div className="connect-container">
           <button 

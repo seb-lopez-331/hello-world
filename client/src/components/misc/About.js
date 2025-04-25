@@ -4,7 +4,7 @@ import Topbar from '../layout/Topbar';
 const About = () => {
   return (
     <>
-      <div style={{ color: '#ffa', margin: '2rem' }}>
+      <div style={{ color: '#ffa', margin: '2rem', height: '100vh' }}>
         <h1>About</h1>
         <p><strong>Take control of your money. Stay focused on your future.</strong></p>
         <p>

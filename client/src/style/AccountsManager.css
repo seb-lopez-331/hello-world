@@ -1,17 +1,20 @@
-.container {
+.accounts-container {
     display: flex;
     flex-direction: column;
     margin: auto;
     margin-top: 4rem;
     width: 600px;
-    background: #fff;
+    background: transparent;
     padding-bottom: 30px;
+    color: #ffa;
+    align-items: center;
 }
 
 .bank-accounts {
     margin-top: 55px;
     display: flex;
     flex-direction: column;
+    width: 100%;
     gap: 25px;
 }
 

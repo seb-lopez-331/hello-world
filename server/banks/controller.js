@@ -5,6 +5,7 @@ const BankAccount = require('../models/BankAccount');
 const User = require('../models/User');
 
 const tellerService = require('../services/tellerService');
+const redisClient = require('../services/redisClient');
 
 // For this, the access token will be propagated to the backend
 exports.connectBank = async (req, res) => {
@@ -84,14 +85,33 @@ exports.disconnectBank = async (req, res) => {
 
 exports.getAccountBalance = async (req, res) => {
   const { accountId } = req.params;
-  const account = await BankAccount.findOne({ userId: req.user.id, accountId });
+  console.log(req.user);
+  const account = await BankAccount.findOne({ userId: req.user.id, id: accountId });
 
   if (!account) return res.status(404).json({ message: 'Account not found' });
 
-  const balances = await plaidService.getBalance(account.accessToken);
-  const balanceInfo = balances.accounts.find(acc => acc.account_id === accountId);
+  const cacheKey = `balance:${accountId}`;
+  console.log('getting cache key');
 
-  res.json(balanceInfo);
+  try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) {
+      return res.json({ ...JSON.parse(cached), cached: true });
+    }
+
+    const accessToken = decrypt(account.accessToken, key);
+    const balances = await tellerService.getBalance(accessToken, account.id);
+
+    // Store in Redis with 1-day TTL
+    await redisClient.set(cacheKey, JSON.stringify(balances), {
+      EX: 60 * 60 * 24,
+    });
+
+    res.json({ ...balances, cached: false });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong' });
+  }  
 };
 
 exports.getAccountTransactions = async (req, res) => {
