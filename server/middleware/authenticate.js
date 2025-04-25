@@ -45,5 +45,6 @@ module.exports = async (req, res, next) => {
   });
 
   req.user = jwt.decode(newAccessToken);
+  console.log("got a new access token");
   return next();
 };

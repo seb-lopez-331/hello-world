@@ -78,4 +78,15 @@ const bankAccountSchema = new mongoose.Schema({
   },
 });
 
+// Prevent duplicate bank accounts
+bankAccountSchema.index({
+  'institution.name': 1,
+  type: 1,
+  name: 1,
+  subtype: 1,
+  currency: 1,
+  lastFour: 1,
+  userId: 1,
+}, {unique: true});
+
 module.exports = mongoose.model('BankAccount', bankAccountSchema);

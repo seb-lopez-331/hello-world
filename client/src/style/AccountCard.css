@@ -45,3 +45,29 @@
     color: #aaa;
     margin-top: 8px;
 }
+
+.top-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.account-balance-icon {
+    font-size: 2rem;
+    color: #ffa;
+    width: 2rem;
+}
+
+.x-icon {
+    font-size: 2rem;
+    align-items: right;
+    width: 2rem;
+    cursor: pointer;
+}
+
+.x-icon:hover {
+    background-color: red;
+    border-radius: 0.5rem;
+    width: 3rem;
+}
+

@@ -5,6 +5,8 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
+const BankAccount = require('./models/BankAccount');
+
 const app = express();
 app.use(cors({
   origin: process.env.CLIENT,
@@ -28,9 +30,19 @@ mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.log('Error connecting to MongoDB:', err));
+  .then(() => {
+    console.log('Connected to MongoDB');
 
+    // Sync indexes after the connection is established
+    BankAccount.syncIndexes()
+      .then(() => {
+        console.log('Indexes synced');
+      })
+      .catch(err => {
+        console.error('Error syncing indexes:', err);
+      });
+  })
+  .catch(err => console.log('Error connecting to MongoDB:', err));
 
 // Simple route to return "Hello World"
 app.get('/', (req, res) => {

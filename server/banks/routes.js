@@ -4,13 +4,13 @@ const bankController = require('./controller.js');
 const authenticate = require('../middleware/authenticate');
 
 // Connect a new bank account
-router.get('/connect', authenticate, bankController.connectBank);
+router.post('/connect', authenticate, bankController.connectBank);
 
 // Get list of connected accounts
 router.get('/', authenticate, bankController.getBankAccounts);
 
 // Disconnect a bank account
-router.delete('/:accountId', authenticate, bankController.disconnectBank);
+router.delete('/:accountId', authenticate, bankController.disconnectAccount);
 
 // Get balance for specific account
 router.get('/:accountId/balance', authenticate, bankController.getAccountBalance);

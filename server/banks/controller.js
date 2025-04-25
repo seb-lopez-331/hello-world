@@ -10,14 +10,14 @@ const redisClient = require('../services/redisClient');
 // For this, the access token will be propagated to the backend
 exports.connectBank = async (req, res) => {
   try {
+    console.log(req.body);
     const { authorization } = req.body;
+    console.log(req.body);
     const accessToken = authorization.accessToken;
-    console.log("got access token from request body");
-    console.log(accessToken);
 
+    console.log("getting accounts from access token")
     const accounts = await tellerService.getAccounts(accessToken);
-    console.log("got accounts");
-    console.log(accounts);
+    console.log("got accounts from access token");
 
     const accountsArray = accounts.map(acc => ({
       userId: req.user.id,
@@ -44,11 +44,11 @@ exports.connectBank = async (req, res) => {
     // TODO: something like this, see API reference
     const savedAccounts = await BankAccount.insertMany(accountsArray);
     const savedAccountDBIDs = savedAccounts.map(acc => acc._id);
+    console.log("saved accounts into db")
 
     await User.findByIdAndUpdate(req.user.id, {
       $push: { connectedAccounts: { $each: savedAccountDBIDs } }
     });
-
     console.log("insert all the saved accounts");
 
     res.status(201).json(savedAccounts);
@@ -63,24 +63,21 @@ exports.getBankAccounts = async (req, res) => {
   res.json(accounts);
 };
 
-exports.disconnectBank = async (req, res) => {
-  const { bank } = req.params;
-  const accounts = await BankAccount.find({ 
-    userId: req.user.id, 
-    institution: {
-      name: bank,
-    },
-  });
+exports.disconnectAccount = async (req, res) => {
+  const { accountId } = req.params;
+  const account = await BankAccount.findOne({ id: accountId });
 
-  if (!accounts) return res.status(404).json({ message: 'Accounts with bank not found' });
+  if (!account) return res.status(404).json({ message: 'Account not found' });
 
-  accounts.forEach(async (acc) => {
-    const accessToken = decrypt(acc.accessToken, key);
-    await tellerService.deleteAccount(accessToken, acc.id);
-    await BankAccount.deleteOne({ id: acc.id })
-  });
-
-  res.json({ message: 'Bank disconnected' });
+  try {
+    const accessToken = decrypt(account.accessToken, key);
+    await tellerService.deleteAccount(accessToken, account.id);
+    await BankAccount.deleteOne({ id: account.id });
+    res.json({ message: 'Account successfully disconnected' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Something went wrong' });
+  }
 };
 
 exports.getAccountBalance = async (req, res) => {
