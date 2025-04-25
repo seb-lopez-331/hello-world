@@ -1,11 +1,13 @@
 const { encrypt, decrypt } = require('../services/cryptoTools');
 const key = Buffer.from(process.env.TELLER_ACCESS_TOKEN_ENCRYPTION_KEY, 'base64');
 
-const BankAccount = require('../models/BankAccount');
 const User = require('../models/User');
 
-const tellerService = require('../services/tellerService');
-const redisClient = require('../services/redisClient');
+exports.getBudgets = async (req, res) => {
+  
+}
+
+
 
 // For this, the access token will be propagated to the backend
 exports.connectBank = async (req, res) => {
@@ -85,11 +87,13 @@ exports.disconnectBank = async (req, res) => {
 
 exports.getAccountBalance = async (req, res) => {
   const { accountId } = req.params;
+  console.log(req.user);
   const account = await BankAccount.findOne({ userId: req.user.id, id: accountId });
 
   if (!account) return res.status(404).json({ message: 'Account not found' });
 
   const cacheKey = `balance:${accountId}`;
+  console.log('getting cache key');
 
   try {
     const cached = await redisClient.get(cacheKey);

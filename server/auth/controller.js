@@ -176,7 +176,6 @@ exports.confirmPasswordResetToken = async (req, res) => {
   });
 
   if (!user) {
-    console.log('are we here?')
     return res.status(400).send('Token is invalid or expired');
   }
 

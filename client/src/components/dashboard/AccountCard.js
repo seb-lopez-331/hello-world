@@ -3,20 +3,17 @@ import { useState, useEffect } from 'react';
 import '../../style/AccountCard.css';
 
 const AccountCard = ({ account }) => {
-  // const { bankName, accountType, accountNumber, balance, dateConnected } = account;
-  const bankName = account.institution.name;
-  const accountName = account.name;
+  const bankName = account.institution.name.toUpperCase();
   const lastFour = account.lastFour;
   const accountType = account.type;
+  const accountSubtype = account.subtype.split('_').join(' ').toUpperCase();
+  const accountName = account.name.toUpperCase();
 
-  // const formattedDate = new Date(dateConnected).toLocaleDateString(undefined, {
-  //   year: 'numeric',
-  //   month: 'short',
-  //   day: 'numeric'
-  // });
+  // We only include bank name if not already inside the account name
+  const includeBankName = accountName.indexOf(bankName) == -1;
 
   const maskedNumber = `•••• •••• •••• ${lastFour}`;
-  const [balance, setBalance] = useState("$0");
+  const [balance, setBalance] = useState("0");
   const [isGoodBalance, setIsGoodBalance] = useState(false);
 
   useEffect(() => {
@@ -34,7 +31,7 @@ const AccountCard = ({ account }) => {
           const balanceNumber = parseFloat(data.ledger.replace('$', ''));
           setBalance(data.ledger);
 
-          if (account.type == 'credit') {
+          if (accountType === 'credit') {
             setIsGoodBalance(balanceNumber == 0);
           } else {
             setIsGoodBalance(balanceNumber > 0);
@@ -42,7 +39,8 @@ const AccountCard = ({ account }) => {
 
         } else {
           console.error("Failed to get balance");
-          setBalance("$0");
+          setBalance("0");
+          setIsGoodBalance(accountType === 'credit');
         }
       } catch (error) {
         console.error("Error fetching balance:", error);
@@ -56,16 +54,13 @@ const AccountCard = ({ account }) => {
   return (
     <>
       <div className="account-card">
-        {/** Replace header with the bank account title */}
+        {/** We can add a small container at the top, maybe for the logo and x icon*/}
         <div className="account-header">
-          <h2>{bankName}</h2>
-          <h3>{accountName}</h3>
-          <span className="account-type">{accountType.toUpperCase()}</span>
+          <h2>{ includeBankName ? bankName : '' } {accountName} </h2>
+          <h3>{accountSubtype}</h3>
         </div>
-        {/** Replace card text with a basic summary (ie account number last 4 digits, routing number last 4 digits, balance) */}
         <div className="account-number">{maskedNumber}</div>
         <div className={isGoodBalance ? "balance-good" : "balance-bad"}>{`Balance: $${balance} ${account.currency}`}</div>
-        {/* <div className="connected-date">Connected on {formattedDate}</div> */}
       </div>
     </>
   );

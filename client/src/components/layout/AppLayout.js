@@ -31,6 +31,7 @@ const AppLayout = () => {
       if (res.ok) {
         const data = await res.json();
       } else {
+        console.log(res);
         console.error("Failed to fetch user data");
       } 
     } catch (error) {

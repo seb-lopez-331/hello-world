@@ -33,7 +33,7 @@ const PublicRoutes = () => {
       <Route path="/*" element={<NotFound />} />
 
       <Route element={<AppLayout />}>
-        <Route exact path ="/" render={() => <Navigate to="/about" />} />
+        <Route path ="/" element={<About />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
         <Route path="/contact-us" element={<ContactUs />} />

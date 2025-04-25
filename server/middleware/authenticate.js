@@ -5,54 +5,45 @@ module.exports = async (req, res, next) => {
   const accessToken = req.cookies.accessToken;
   const refreshToken = req.cookies.refreshToken;
 
+  // If we do not have an access token, return a 401
   if (!accessToken) {
+    console.log("no access token provided, won't authenticate");
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
-  try {
-    // Try to verify access token first
-    const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-    req.user = decoded;
+  if (!refreshToken) {
+    console.log("no refresh token provided, will authenticate with existing access token");
+    const decodedAccessToken = await jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    req.user = decodedAccessToken;
     return next();
-  } catch (err) {
-    if (err.name !== 'TokenExpiredError') {
-      // If token is invalid for reasons other than expiry
-      return res.status(403).json({ message: 'Invalid token' });
-    }
-
-    // At this point, access token is expired.
-    // Check if we have a refresh token
-    if (!refreshToken) {
-      return res.status(403).json({ message: 'No refresh token provided' });
-    }
-
-    // Check if refresh token exists in DB
-    const refreshTokenInDB = await RefreshToken.findOne({ token: refreshToken });
-    if (!refreshTokenInDB) {
-      return res.status(403).json({ message: 'Refresh token not recognized' });
-    }
-
-    try {
-      const decodedRefresh = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-
-      // Optionally: create a new refresh token here and rotate
-      const newAccessToken = jwt.sign(
-        { id: decodedRefresh.id, username: decodedRefresh.username }, // match payload
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: '15m' }
-      );
-
-      res.cookie('accessToken', newAccessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
-        maxAge: 15 * 60 * 1000 // 15 minutes
-      });
-
-      req.user = jwt.decode(newAccessToken);
-      return next();
-    } catch (refreshErr) {
-      return res.status(403).json({ message: 'Refresh token invalid or expired' });
-    }
   }
+
+  // Verify existing refresh token cookie
+  const decodedRefreshToken = await jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+  // Check the DB to see if the refresh token is the same. If not, then let's delete the cookie.
+  const refreshTokenInDB = await RefreshToken.findOne({ token: refreshToken });
+  if (!refreshTokenInDB) {
+    res.clearCookie('refreshToken');
+    const decodedAccessToken = await jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    req.user = decodedAccessToken;
+    return next();
+  }
+
+  // Refresh the access token
+  const newAccessToken = jwt.sign(
+    { id: decodedRefreshToken.id, username: decodedRefreshToken.username }, // match payload
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: '15m' }
+  );
+
+  res.cookie('accessToken', newAccessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
+    maxAge: 15 * 60 * 1000 // 15 minutes
+  });
+
+  req.user = jwt.decode(newAccessToken);
+  return next();
 };

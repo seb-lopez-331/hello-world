@@ -4,7 +4,7 @@ const bankController = require('./controller.js');
 const authenticate = require('../middleware/authenticate');
 
 // Connect a new bank account
-router.post('/connect', authenticate, bankController.connectBank);
+router.get('/connect', authenticate, bankController.connectBank);
 
 // Get list of connected accounts
 router.get('/', authenticate, bankController.getBankAccounts);
