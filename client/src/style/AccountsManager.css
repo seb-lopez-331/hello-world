@@ -18,10 +18,13 @@
     gap: 25px;
 }
 
-.connect-container {
+.accounts-header {
     display: flex;
     gap: 30px;
     margin: 60px auto;
+    background-color: #060b26;
+    padding: 1.5rem;
+    border-radius: 1rem;
 }
 
 .connect {

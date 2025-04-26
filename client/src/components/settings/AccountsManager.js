@@ -2,13 +2,16 @@
 import { useState, useEffect } from "react";
 import { useTellerConnect } from 'teller-connect-react';
 
-import useUser from '../utils/useUser'
+import useUser from '../utils/useUser';
+
 import AccountCard from '../dashboard/AccountCard';
 
 import '../../style/AccountsManager.css';
 
 const AccountsManager = () => {
   const [isConfirmDeleteVisible, setIsConfirmDeleteVisible] = useState(false);
+  const [query, setQuery] = useState('');
+  const [data, setData] = useState([]);
 
   const handleXClicked = async () => {
     console.log(isConfirmDeleteVisible);
@@ -17,6 +20,23 @@ const AccountsManager = () => {
 
   const closePopup = async () => {
     setIsConfirmDeleteVisible(false);
+  };
+
+  const handleInputChange = (event) => {
+    setQuery(event.target.value);
+
+    setData(user.connectedAccounts.filter(acc => {
+      const accName = acc.name.toLowerCase();
+      const bankName = acc.institution.name.toLowerCase();
+      const accSubtype = acc.subtype.split('_').join(' ').toLowerCase();
+      const lastFour = acc.lastFour.toLowerCase();
+      const lowerCasedQuery = query.toLowerCase()
+
+      return accName.includes(lowerCasedQuery) || 
+        bankName.includes(lowerCasedQuery) ||
+        accSubtype.includes(lowerCasedQuery) ||
+        lastFour.includes(lowerCasedQuery);
+    }));
   };
 
   const serverUrl = process.env.REACT_APP_SERVER;
@@ -78,14 +98,14 @@ const AccountsManager = () => {
         <h1 className="accounts-manager-header">
           Linked Accounts 
         </h1>
-        <div className="bank-accounts">
-          { user.connectedAccounts.map((account) => <AccountCard 
-            account={account}
-            handleXClicked={handleXClicked}
-            handleConfirmDeletion={() => {handleConfirmDeletion(account)}}
-           />) }
-        </div>
-        <div className="connect-container">
+        {/* TODO: Rename this container and add 1.) search bar, 2.) submit button, 3.) connect bank account */}
+        <div className="accounts-header">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={query}
+            onChange={handleInputChange}
+          />
           <button 
             className="connect" 
             onClick={() => open()} 
@@ -93,6 +113,13 @@ const AccountsManager = () => {
           >
             (+) Connect a bank account
           </button>
+        </div>
+        <div className="bank-accounts">
+          { (query === '' ? user.connectedAccounts : data).map((account) => <AccountCard 
+            account={account}
+            handleXClicked={handleXClicked}
+            handleConfirmDeletion={() => {handleConfirmDeletion(account)}}
+           />) }
         </div>
       </div>
     </>
